@@ -23,9 +23,12 @@ WebServer server(80);
 #define LED_PIN 33
 #define Internal_LED 26
 
-// WiFi credentials - Update these with your network details
+//TODO:
+// Move to different file
+// WiFi credentials 
 const char* ssid = "";
 const char* password = "";
+
 
 // NTP server configuration for Poland
 const char* ntpServer = "pool.ntp.org";
