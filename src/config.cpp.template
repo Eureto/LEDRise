@@ -1,0 +1,11 @@
+#include "config.h"
+
+// WiFi configuration definitions
+// Copy this file to config.cpp and fill in your actual credentials
+const char* ssid = "YOUR_WIFI_SSID_HERE";
+const char* password = "YOUR_WIFI_PASSWORD_HERE";
+
+// NTP server configuration for Poland definitions
+const char* ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 1 * 3600;  // Poland is UTC+1
+const int daylightOffset_sec = 3600;  // DST offset (summer time)
