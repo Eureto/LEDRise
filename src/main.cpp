@@ -20,6 +20,7 @@ void setup() {
 
   configServer();
 
+  digitalWrite(Internal_LED, LOW); // Turn off internal LED after setup
 
   if(DEBUG)
   {

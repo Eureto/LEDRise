@@ -74,7 +74,7 @@ void startAlarm()
   //calculate seconds to xx:00 minutes 
   int secondsToNextMinute = 60 - (localtime(&tempTime)->tm_sec);
   Serial.printf("Seconds to next full minute: %d\n", secondsToNextMinute);
-  delay((secondsToNextMinute * 1000)-700); // Delay until next full minute
+  delay((secondsToNextMinute * 1000)); // Delay until next full minute
   tempTime = time(nullptr); // Update tempTime after delay
 
   //Calculate steps for led dimming up 
@@ -93,14 +93,14 @@ void startAlarm()
   if(currentTimeInMinutes >= startTime) {
     toAlarmInMinutes = 24*60 - currentTimeInMinutes + startTime;
   } else {
-    toAlarmInMinutes = startTime - currentTimeInMinutes;
+    toAlarmInMinutes = startTime - currentTimeInMinutes ;
   }
     Serial.println("toAlarmInMinutes value:" + String(toAlarmInMinutes));
     Serial.printf("Alarm should start in %d minutes\n so it is in %d hours and %d minutes \n", toAlarmInMinutes, toAlarmInMinutes / 60, toAlarmInMinutes % 60);
     delay(toAlarmInMinutes * 60000); // Delay until alarm time
     Serial.println("Starting pre-alarm sequence...");
     // Pre-alarm sequence: gradually increase LED brightness
-    for (int brightness = steps; brightness < 255; brightness += steps) {
+    for (int brightness = 0; brightness < 255; brightness += steps) {
       analogWrite(LED_PIN, brightness);
       Serial.printf("LED brightness: %d\n", brightness);
       delay(60000); // Wait 1 minute between brightness increases
@@ -110,9 +110,9 @@ void startAlarm()
     delay(10000);
     for(int i=0; i<10; i++) {
       analogWrite(LED_PIN, 0); // Turn off LED
-      delay(500);
+      delay(100);
       analogWrite(LED_PIN, 255); // Turn on LED
-      delay(500);
+      delay(100);
     }
     analogWrite(LED_PIN, 255);
     delay(5 * 60 * 1000); // Keep LED on for 5 minutes

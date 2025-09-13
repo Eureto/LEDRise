@@ -7,7 +7,7 @@ extern const char* password;
 
 // Hardware configuration
 #define LED_PIN 33
-#define Internal_LED 26
+#define Internal_LED 33
 
 // NTP server configuration for Poland (extern declarations)
 extern const char* ntpServer;

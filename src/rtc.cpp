@@ -54,7 +54,7 @@ void printTimeRTC(){
     char buffer[64];
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S %A", timeinfo);
     Serial.printf("RTC Time: %s\n", buffer);
-    Serial.printf("Raw timestamp: %ld\n", now);
+    //Serial.printf("Raw timestamp: %ld\n", now);
   } else {
     Serial.println("Failed to read RTC time");
     initializeTime(); // Reinitialize time if failed
