@@ -12,7 +12,6 @@
 *.hex
 
 .vscode/settings.json
-.vscode/tasks.json
 *.swp
 *.swo
 *~

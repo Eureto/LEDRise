@@ -4,6 +4,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <WebServer.h>
+#include "config.h"
 
 void connectToWiFi();
 void initializeTime();
@@ -15,6 +16,7 @@ void handleStatus();
 void handleNotFound();
 void startAlarmTask();
 void startAlarm();
+void printTimeRTC();
 
 TaskHandle_t alarmTaskHandle = NULL;
 TaskHandle_t ledTaskHandle = NULL;
@@ -22,12 +24,6 @@ WebServer server(80);
 
 #define LED_PIN 33
 #define Internal_LED 26
-
-//TODO:
-// Move to different file
-// WiFi credentials 
-const char* ssid = "";
-const char* password = "";
 
 
 // NTP server configuration for Poland
@@ -90,6 +86,7 @@ void setup() {
 void loop() {
 server.handleClient();  // Handle incoming requests
   delay(10);
+  printTimeRTC();
 }
 
 void connectToWiFi() {
@@ -133,7 +130,7 @@ void connectToWiFi() {
 
 void initializeTime() {
   // long blink short noBlink
-  static LedParams ledParams = {800, 200}; 
+  static LedParams ledParams = {1000, 100}; 
   //Create task indicating connection to wifi
   xTaskCreatePinnedToCore(
     ledSignals,   // Task function
@@ -170,6 +167,23 @@ void initializeTime() {
   }
 
   printTime();
+}
+
+void printTimeRTC(){
+  //print time directly from RTC
+  time_t now = time(nullptr);
+  struct tm *timeinfo = localtime(&now);
+  if (timeinfo != NULL) {
+    char buffer[64];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S %A", timeinfo);
+    Serial.printf("RTC Time: %s\n", buffer);
+    Serial.printf("Raw timestamp: %ld\n", now);
+  } else {
+    Serial.println("Failed to read RTC time");
+    initializeTime(); // Reinitialize time if failed
+  }
+  
+
 }
 
 void printTime() {
