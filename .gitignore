@@ -1,9 +1,9 @@
-.pio/
-.vscode/browser.c_cpp.db*
-.vscode/c_cpp_properties.json
-.vscode/launch.json
-.vscode/ipch/
-src/config.cpp
+/ESP32Code/.pio/
+/ESP32Code/.vscode/browser.c_cpp.db*
+/ESP32Code/.vscode/c_cpp_properties.json
+/ESP32Code/.vscode/launch.json
+/ESP32Code/.vscode/ipch/
+/ESP32Code/src/config.cpp
 
 # Compiled files
 *.o
@@ -12,7 +12,7 @@ src/config.cpp
 *.bin
 *.hex
 
-.vscode/settings.json
+/ESP32Code/.vscode/settings.json
 *.swp
 *.swo
 *~
