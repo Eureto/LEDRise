@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.NumberPicker
+import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     var timePicker: TimePicker? = null
     var setButton: Button? = null
     private val client = OkHttpClient()
+    var textInfo: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         preMinutePicker?.wrapSelectorWheel = true // Allows continuous scrolling (59 -> 0 and 0 -> 59)
         preMinutePicker?.value = 60 // Example: Set initial value to 30 minutes
 
+        textInfo = findViewById<TextView>(R.id.textViewSetInfo)
 
         setButton = findViewById<Button>(R.id.buttonSet)
         setButton?.setOnClickListener {
@@ -69,13 +72,17 @@ class MainActivity : AppCompatActivity() {
             try {
                 val responseBody = sendGetRequest(url)
                 if (responseBody != null) {
+                    textInfo?.text = "Set to ${prepareDigit(hour)}:${prepareDigit(minute)} with Pre-alarm ${prepareDigit(preMinutePicker?.value)} minutes"
                     Log.d("NetworkResponse", "Response: $responseBody")
                 } else {
+                    textInfo?.text = "Failed to set alarm"
                     Log.e("NetworkResponse", "Request failed or no response body.")
                 }
             } catch (e: IOException) {
+                textInfo?.text = "Network error occurred"
                 Log.e("NetworkRequest", "Network Error: ${e.message}", e)
             } catch (e: Exception) {
+                textInfo?.text = "An error occurred"
                 Log.e("NetworkRequest", "Error: ${e.message}", e)
             }
         }
