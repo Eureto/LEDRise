@@ -19,6 +19,16 @@ void connectToWiFi() {
   Serial.print("Connecting to WiFi network: ");
   Serial.println(ssid);
   
+  IPAddress local_IP(ESP32_IP);
+  IPAddress gateway(GATEWAY_IP);
+  IPAddress subnet(SUBNET_MASK);
+  IPAddress primaryDNS(PRIMARY_DNS);
+  IPAddress secondaryDNS(SECONDARY_DNS);
+
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("Static IP configuration failed!");
+  }
+
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {

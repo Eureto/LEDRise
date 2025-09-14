@@ -1,5 +1,12 @@
 Created using PlatformIO for VSCode 
+and Android Studio
 
 
-TODO:
-- create mobile app 
+
+
+
+
+
+
+COMPILING:
+- Create config.cpp from config.cpp.template

@@ -7,13 +7,90 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/editTextText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:fallbackLineSpacing="false"
+        android:inputType="text"
+        android:letterSpacing="1"
+        android:lineSpacingExtra="8sp"
+        android:text="LedRise"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewHour"
+        android:layout_width="304dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="40dp"
+        android:text="Hour"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText"
+        tools:text="Hour :" />
+
+    <TextView
+        android:id="@+id/textViewPreMinutes"
+        android:layout_width="312dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        android:text="PreMinutes"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timePicker"
+        tools:text="PreMinutes :" />
+
+    <TimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="312dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="10dp"
+        android:padding="24dp"
+        android:timePickerMode="spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewHour" />
+
+    <NumberPicker
+        android:id="@+id/minutePicker"
+        android:layout_width="62dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPreMinutes" />
+
+    <Button
+        android:id="@+id/buttonSet"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:text="Set Alarm"
+        app:cornerRadius="0px"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewSetInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minutePicker" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
