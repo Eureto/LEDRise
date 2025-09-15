@@ -2,8 +2,6 @@ Created using PlatformIO for VSCode
 and Android Studio
 
 TODO:
- - force app to stay in portrait mode 
- - make buttons a bit bigger
  - handle errors with connection
  - add ability to delete, check alarm 
  - move function that starts alarm to background so microcontroller won't be freezed during delay
