@@ -2,6 +2,7 @@ Created using PlatformIO for VSCode
 and Android Studio
 
 TODO:
+ - Chenge the way that brightening up works, delete loop
  - handle errors with connection
  - add ability to delete, check alarm 
  - move function that starts alarm to background so microcontroller won't be freezed during delay
