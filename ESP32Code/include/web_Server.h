@@ -9,6 +9,7 @@ void handleSetAlarm();
 void handleStatus();
 void handleNotFound();
 void configServer();
+void handleStopAlarm();
 
 extern WebServer server;
 

@@ -16,7 +16,7 @@ int calculatePauseTimeInMilliseconds(int preAlarmMinutes){
 }
 
 // Staring pre-alarm and alarm sequence
-void startAlarm()
+void startAlarm(void *parameter)
 {
     time_t tempTime = time(nullptr);
     //calculate seconds to xx:00 minutes 

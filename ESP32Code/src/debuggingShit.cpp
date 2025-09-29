@@ -3,7 +3,6 @@
 #include "config.h"
 #include "rtc.h"
 
-TaskHandle_t alarmTaskHandle = NULL;
 
 void printTimeINFINITELY(){
 

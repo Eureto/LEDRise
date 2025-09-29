@@ -9,6 +9,7 @@ TaskHandle_t alarmTaskHandle = NULL;
 void configServer(){
   server.on("/setalarm", handleSetAlarm);
   server.on("/status", handleStatus);
+  server.on("/stopalarm", handleStopAlarm);
   server.onNotFound(handleNotFound);
 
   server.begin();
@@ -41,9 +42,17 @@ void handleSetAlarm() {
         Serial.printf("Alarm set: %s with %d minutes pre-alarm\n", time.c_str(), preAlarm);
         server.send(200, "text/plain", "OK");
 
+        xTaskCreatePinnedToCore(
+          startAlarm,        // Task function
+          "alarmSequence",  // Task name
+          4096,              // Stack size
+          NULL,// Task parameters
+          1,                 // Priority
+          &alarmTaskHandle,    // Task handle
+          tskNO_AFFINITY     // Core ID (0 or 1)
+        );
 
-
-        startAlarm(); // Start the alarm task if not already running
+        //startAlarm(); // Start the alarm task if not already running
       } else {
         server.send(400, "text/plain", "Invalid time or prealarm values");
       }
@@ -59,7 +68,7 @@ void handleStatus() {
   String response = "";
   
   if (alarmConfig.isSet) {
-    response = "ALARM_SET:" + alarmConfig.alarmTime + ":" + String(alarmConfig.preAlarmMinutes);
+    response = "ALARM_SET:" + alarmConfig.alarmTime + " and preminutes: " + String(alarmConfig.preAlarmMinutes);
   } else {
     response = "NO_ALARM";
   }
@@ -69,4 +78,19 @@ void handleStatus() {
 
 void handleNotFound() {
   server.send(404, "text/plain", "Not found");
+}
+
+void handleStopAlarm() {
+  if (alarmConfig.isSet) {
+    alarmConfig.isSet = false; // Reset alarm
+    if (alarmTaskHandle != NULL) {
+      vTaskDelete(alarmTaskHandle);
+      alarmTaskHandle = NULL;
+    }
+    analogWrite(LED_PIN, 0); // Turn off LED if it was on
+    Serial.println("Alarm stopped by user");
+    server.send(200, "text/plain", "Alarm stopped");
+  } else {
+    server.send(400, "text/plain", "No alarm is set");
+  }
 }

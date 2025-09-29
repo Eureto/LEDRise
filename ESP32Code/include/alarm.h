@@ -18,6 +18,6 @@ struct AlarmConfig {
 extern AlarmConfig alarmConfig;
 
 
-void startAlarm();
+void startAlarm(void *parameter);
 
 #endif
