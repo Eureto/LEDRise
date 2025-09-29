@@ -5,16 +5,16 @@
 
 TaskHandle_t ledTaskHandle = NULL;
 
-
+// setup RTC with NTP server to poland time and then display it 
 void initializeTime() {
   // long blink short noBlink
-  static LedParams ledParams = {1000, 100}; 
+  static LedBlinkingParams LedBlinkingParams = {1000, 100}; 
   //Create task indicating connection to wifi
   xTaskCreatePinnedToCore(
-    ledSignals,   // Task function
-    "LedSignalsTime",     // Task name
+    ledSignals,        // Task function
+    "LedSignalsTime",  // Task name
     1024,              // Stack size
-    &ledParams,        // Task parameters
+    &LedBlinkingParams,// Task parameters
     1,                 // Priority
     &ledTaskHandle,    // Task handle
     tskNO_AFFINITY     // Core ID (0 or 1)

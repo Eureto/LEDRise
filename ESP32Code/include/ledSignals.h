@@ -5,11 +5,12 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-struct LedParams {
+struct LedBlinkingParams {
   int blinkSpeedOn;
   int blinkSpeedOff;
 };
 
 void ledSignals(void *parameter);
+void ledSignals(void *parameter, int repetitions);
 
 #endif

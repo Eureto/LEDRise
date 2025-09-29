@@ -1,9 +1,10 @@
 #include "web_Server.h"
 #include <Arduino.h>
 #include <WiFi.h>
+#include "alarm.h"
 WebServer server(80);
 
-AlarmConfig alarmConfig = {"", 0, 0, 0, false};
+TaskHandle_t alarmTaskHandle = NULL;
 
 void configServer(){
   server.on("/setalarm", handleSetAlarm);
@@ -17,7 +18,7 @@ void configServer(){
   Serial.println("/setalarm?time=HH:MM&prealarm=MINUTES");
   
 }
-
+// this function handles settings for alarm via HTTP GET request
 void handleSetAlarm() {
   if (server.hasArg("time") && server.hasArg("prealarm")) {
     String time = server.arg("time");
@@ -39,6 +40,9 @@ void handleSetAlarm() {
         
         Serial.printf("Alarm set: %s with %d minutes pre-alarm\n", time.c_str(), preAlarm);
         server.send(200, "text/plain", "OK");
+
+
+
         startAlarm(); // Start the alarm task if not already running
       } else {
         server.send(400, "text/plain", "Invalid time or prealarm values");
@@ -65,58 +69,4 @@ void handleStatus() {
 
 void handleNotFound() {
   server.send(404, "text/plain", "Not found");
-}
-
-
-void startAlarm()
-{
-  time_t tempTime = time(nullptr);
-  //calculate seconds to xx:00 minutes 
-  int secondsToNextMinute = 60 - (localtime(&tempTime)->tm_sec);
-  Serial.printf("Seconds to next full minute: %d\n", secondsToNextMinute);
-  delay((secondsToNextMinute * 1000)); // Delay until next full minute
-  tempTime = time(nullptr); // Update tempTime after delay
-
-  //Calculate steps for led dimming up 
-  int steps = 255 / alarmConfig.preAlarmMinutes;
-  Serial.printf("Steps for dimming: %d\n", steps);
-
-  //Calculate time to start pre-alarm - minutes after midnight
-  int startTime = alarmConfig.Hour * 60 + alarmConfig.Minute - alarmConfig.preAlarmMinutes;
-  Serial.printf("Start time for alarm: %d\n", startTime);
-
-  int currentTimeInMinutes = (localtime(&tempTime)->tm_hour) * 60 + (localtime(&tempTime)->tm_min);
-  Serial.printf("Current time in minutes: %d\n", currentTimeInMinutes);
-  
-  int toAlarmInMinutes{0};
-  //calculate time to allarm in minutes 
-  if(currentTimeInMinutes >= startTime) {
-    toAlarmInMinutes = 24*60 - currentTimeInMinutes + startTime;
-  } else {
-    toAlarmInMinutes = startTime - currentTimeInMinutes ;
-  }
-    Serial.println("toAlarmInMinutes value:" + String(toAlarmInMinutes));
-    Serial.printf("Alarm should start in %d minutes\n so it is in %d hours and %d minutes \n", toAlarmInMinutes, toAlarmInMinutes / 60, toAlarmInMinutes % 60);
-    delay(toAlarmInMinutes * 60000); // Delay until alarm time
-    Serial.println("Starting pre-alarm sequence...");
-    // Pre-alarm sequence: gradually increase LED brightness
-    for (int brightness = 0; brightness < 255; brightness += steps) {
-      analogWrite(LED_PIN, brightness);
-      Serial.printf("LED brightness: %d\n", brightness);
-      delay(60000); // Wait 1 minute between brightness increases
-    }
-    Serial.println("Pre-alarm sequence complete. LED at full brightness.");
-    analogWrite(LED_PIN, 255); // Ensure LED is fully on
-    delay(10000);
-    for(int i=0; i<10; i++) {
-      analogWrite(LED_PIN, 0); // Turn off LED
-      delay(100);
-      analogWrite(LED_PIN, 255); // Turn on LED
-      delay(100);
-    }
-    analogWrite(LED_PIN, 255);
-    delay(5 * 60 * 1000); // Keep LED on for 5 minutes
-    analogWrite(LED_PIN, 0); // Turn off LED after alarm
-    Serial.println("Alarm sequence complete. LED turned off.");
-    alarmConfig.isSet = false; // Reset alarm 
 }

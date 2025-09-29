@@ -9,18 +9,7 @@ void handleSetAlarm();
 void handleStatus();
 void handleNotFound();
 void configServer();
-void startAlarm();
 
 extern WebServer server;
-
-struct AlarmConfig {
-  String alarmTime;  // Format: "HH:MM"
-  int Hour;
-  int Minute;    
-  int preAlarmMinutes;  // Minutes before alarm to start pre-alarm
-  bool isSet;           // Flag to indicate if alarm is configured
-};
-
-extern AlarmConfig alarmConfig;
 
 #endif
