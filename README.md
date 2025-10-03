@@ -2,6 +2,7 @@ Created using PlatformIO for VSCode
 and Android Studio
 
 TODO:
+ - check why esp gets time after alarm end
  - add ability to set blinking at alarm sequence
  - handle errors with connection
  - add ability to delete, check alarm 
