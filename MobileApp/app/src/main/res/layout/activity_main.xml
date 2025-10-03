@@ -8,45 +8,32 @@
     tools:context=".MainActivity"
     android:paddingBottom = "0dp">
 
-    <EditText
-        android:id="@+id/editTextText"
-        android:layout_width="448dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:fallbackLineSpacing="false"
-        android:inputType="text"
-        android:letterSpacing="1"
-        android:lineSpacingExtra="8sp"
-        android:text="LedRise"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/textViewHour"
         android:layout_width="304dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="184dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="32dp"
         android:text="Hour"
         android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/timePicker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:text="Hour :" />
 
     <TextView
         android:id="@+id/textViewPreMinutes"
         android:layout_width="312dp"
-        android:layout_height="18dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="10dp"
         android:text="PreMinutes"
         android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/minutePicker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,10 +44,12 @@
         android:id="@+id/timePicker"
         android:layout_width="0dp"
         android:layout_height="294dp"
+        android:layout_marginBottom="11dp"
         android:padding="24dp"
-        android:scaleX="1.4"
-        android:scaleY="1.4"
+        android:scaleX="1.6"
+        android:scaleY="1.6"
         android:timePickerMode="spinner"
+        app:layout_constraintBottom_toTopOf="@+id/textViewPreMinutes"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.448"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,36 +59,78 @@
         android:id="@+id/minutePicker"
         android:layout_width="0dp"
         android:layout_height="137dp"
-        android:layout_marginTop="10dp"
-        android:scaleX="1.4"
-        android:scaleY="1.4"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="46dp"
+        android:scaleX="1.6"
+        android:scaleY="1.6"
+        app:layout_constraintBottom_toTopOf="@+id/textViewSetInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPreMinutes" />
 
-    <Button
-        android:id="@+id/buttonSet"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingBottom="0dp"
-        android:text="Set Alarm"
-        app:cornerRadius="0px"
-        app:iconPadding="0dp"
-        android:layout_marginBottom = "0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <TextView
         android:id="@+id/textViewSetInfo"
         android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="50dp"
+        android:layout_height="wrap_content"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSet"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minutePicker" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="LedRise"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/textViewHour"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSetInfo">
+
+        <Button
+            android:id="@+id/buttonSet"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="0px"
+            android:text="Set Alarm"
+            app:cornerRadius="0px"
+            app:iconPadding="0dp" />
+
+        <Button
+            android:id="@+id/buttonDeleteAlarm"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_weight="1"
+            android:text="Delete Alarm"
+            app:cornerRadius="0px" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

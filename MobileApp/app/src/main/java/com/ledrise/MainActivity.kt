@@ -17,12 +17,16 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.net.InetAddress
 class MainActivity : AppCompatActivity() {
 
     var preMinutePicker: NumberPicker? = null
     var timePicker: TimePicker? = null
     var setButton: Button? = null
+    var deleteButton: Button? = null
     private val client = OkHttpClient()
+    val deviceIPAddress:String = "192.168.0.150"
+
     var textInfo: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +56,93 @@ class MainActivity : AppCompatActivity() {
         setButton?.setOnClickListener {
             onSetButtonClick()
         }
+        deleteButton = findViewById<Button>(R.id.buttonDeleteAlarm)
+        deleteButton?.setOnClickListener{
+            onDeleteButtonClick()
+
+        }
+
+        // After initialization check if alarm is set
+        checkStatusOfAlarm();
+
     }
 
+    fun checkStatusOfAlarm(){
+        val url = "http://192.168.0.150/status"
+        //val deviceIPAddress:String = "192.168.0.150"
+
+        lifecycleScope.launch {
+            try {
+                // Check if device is avilable in the network
+                if(!isDeviceReachable(deviceIPAddress)) {
+                    textInfo?.text = "Device is not avilable in this network"
+                    return@launch
+                }
+                val responseBody = sendGetRequest(url)
+                if(responseBody != null) {
+                    if (responseBody.equals("NO_ALARM")) {
+                        textInfo?.text = "No alarm set"
+                    } else {
+                        val parts = responseBody.split(":")
+                        textInfo?.text =
+                            "Alarm is set on ${parts[1]}:${parts[2]} with ${parts[3]} minutes Pre-alarm \n"
+                    }
+                    Log.d("NetworkResponse", "Response: $responseBody")
+                }else{
+                    textInfo?.text = "Failed to get alarm status"
+                    Log.e("NetworkResponse", "Request failed or no response body.")
+                }
+
+            } catch (e: IOException) {
+                textInfo?.text = "Network error occurred"
+                Log.e("NetworkRequest", "Network Error: ${e.message}", e)
+            } catch (e: Exception) {
+                textInfo?.text = "An error occurred"
+                Log.e("NetworkRequest", "Error: ${e.message}", e)
+            }
+        }
+
+    }
+
+    private suspend fun isDeviceReachable(ipAddress: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val timeoutMs = 2000
+                val inet = InetAddress.getByName(ipAddress)
+                inet.isReachable(timeoutMs)
+            } catch (e: IOException) {
+                // Host not found or other network error
+                false
+            }
+        }
+    }
+    fun onDeleteButtonClick() {
+        val url = "http://192.168.0.150/stopalarm"
+
+        lifecycleScope.launch {
+            try {
+                val responseBody = sendGetRequest(url)
+                if (responseBody != null) {
+                    if(responseBody.equals("Alarm stopped")){
+                        textInfo?.text = "Alarm deleted"
+                    }else if(responseBody.equals("No alarm is set"))
+                    {
+                        textInfo?.text = "No alarm set"
+                    }
+                    Log.d("NetworkResponse", "Response: $responseBody")
+                } else {
+                    textInfo?.text = "Failed to delete alarm"
+                    Log.e("NetworkResponse", "Request failed or no response body.")
+                }
+            } catch (e: IOException) {
+                textInfo?.text = "Network error occurred"
+                Log.e("NetworkRequest", "Network Error: ${e.message}", e)
+            } catch (e: Exception) {
+                textInfo?.text = "An error occurred"
+                Log.e("NetworkRequest", "Error: ${e.message}", e)
+            }
+        }
+    }
     fun onSetButtonClick() {
         val hour = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             timePicker?.hour
@@ -68,8 +157,14 @@ class MainActivity : AppCompatActivity() {
 
         val url = "http://192.168.0.150/setalarm?time=${prepareDigit(hour)}:${prepareDigit(minute)}&prealarm=${prepareDigit(preMinutePicker?.value)}"
         Log.d("URL: ", url)
+        //val deviceIPAddress:String = "192.168.0.150"
         lifecycleScope.launch {
             try {
+                // Check if device is avilable in the network
+                if(!isDeviceReachable(deviceIPAddress)) {
+                    textInfo?.text = "Device is not avilable in this network"
+                    return@launch
+                }
                 val responseBody = sendGetRequest(url)
                 if (responseBody != null) {
                     textInfo?.text = "Set to ${prepareDigit(hour)}:${prepareDigit(minute)} with Pre-alarm ${prepareDigit(preMinutePicker?.value)} minutes"
@@ -109,6 +204,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // This function is used to return one digits like 7 to 07 because controller can only take digits like that
     fun prepareDigit(digit: Int?): String {
      return if (digit!! < 10)"0$digit" else "$digit"
     }
