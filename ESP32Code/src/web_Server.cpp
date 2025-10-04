@@ -25,11 +25,11 @@ void configServer(){
 void handleLEDOnTime() {
   if (server.hasArg("minutes")) {
     int minutes = server.arg("minutes").toInt();
-    if (minutes > 0 && minutes <= 60) {
+    if (minutes >= 0 && minutes <= 60) {
       alarmConfig.minutesLedON = minutes;
       server.send(200, "text/plain", "OK");
     } else {
-      server.send(400, "text/plain", "Invalid minutes value. Must be between 1 and 60.");
+      server.send(400, "text/plain", "Invalid minutes value. Must be between 0 and 60.");
     }
   } else {
     server.send(400, "text/plain", "Missing parameter: minutes");

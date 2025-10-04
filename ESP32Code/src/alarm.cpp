@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 #include "config.h"
 #include "alarm.h"
 #include "ledSignals.h"
@@ -76,5 +78,12 @@ void startAlarm(void *parameter)
     analogWrite(LED_PIN, 0); // Turn off LED after alarm
     Serial.println("Alarm sequence complete. LED turned off.");
     alarmConfig.isSet = false; // Reset alarm 
+    
+    // Small delay to ensure all operations complete
+    delay(100);
+    
+    // Properly delete the task to avoid crashes
+    Serial.println("Deleting alarm task...");
+    vTaskDelete(NULL);
 }
 

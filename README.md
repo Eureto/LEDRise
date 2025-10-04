@@ -2,12 +2,7 @@ Created using PlatformIO for VSCode
 and Android Studio
 
 TODO:
- - check why esp gets time after alarm end
- - add ability to set blinking at alarm sequence
- - handle errors with connection
- - add ability to delete, check alarm 
- - move function that starts alarm to background so microcontroller won't be freezed during delay
- - or put microcontroller to sleep while waiting for alarm to start
+ - in app add ability to set flsahing repetition and led on time 
 
 
 
