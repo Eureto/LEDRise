@@ -5,7 +5,7 @@
 #include "alarm.h"
 #include "ledSignals.h"
 
-AlarmConfig alarmConfig = {"", 0, 0, 0, false};
+AlarmConfig alarmConfig = {"", 0, 0, 0, false, 10, 5}; // Default 
 
 
 int calculatePauseTimeInMilliseconds(int preAlarmMinutes){
@@ -69,10 +69,10 @@ void startAlarm(void *parameter)
     analogWrite(LED_PIN, 255); // Ensure LED is fully on
     delay(10000); 
     LedBlinkingParams ledBlinkingParams = {100, 100}; // Fast blinking parameters
-    ledSignals(&ledBlinkingParams, 30); // CAUTION: This function uses INTERNAL_LED pin as output.
+    ledSignals(&ledBlinkingParams, alarmConfig.flashingRepetitions); // CAUTION: This function uses INTERNAL_LED pin as output.
     
     analogWrite(LED_PIN, 255);
-    delay(5 * 60 * 1000); // Keep LED on for 5 minutes
+    delay(alarmConfig.minutesLedON * 60 * 1000); // Keep LED on for x minutes
     analogWrite(LED_PIN, 0); // Turn off LED after alarm
     Serial.println("Alarm sequence complete. LED turned off.");
     alarmConfig.isSet = false; // Reset alarm 

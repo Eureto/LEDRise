@@ -6,6 +6,8 @@
 #include "config.h"
 
 void handleSetAlarm();
+void handleSetFlashing();
+void handleLEDOnTime();
 void handleStatus();
 void handleNotFound();
 void configServer();

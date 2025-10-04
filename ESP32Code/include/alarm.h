@@ -12,6 +12,8 @@ struct AlarmConfig {
   int Minute;    
   int preAlarmMinutes;  // Minutes before alarm to start pre-alarm
   bool isSet;           // Flag to indicate if alarm is configured
+  int flashingRepetitions; // Interval for LED flashing in milliseconds
+  int minutesLedON;
 };
 
 

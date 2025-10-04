@@ -10,6 +10,8 @@ void configServer(){
   server.on("/setalarm", handleSetAlarm);
   server.on("/status", handleStatus);
   server.on("/stopalarm", handleStopAlarm);
+  server.on("/setflashing", handleSetFlashing);
+  server.on("/ledonminutes", handleLEDOnTime);
   server.onNotFound(handleNotFound);
 
   server.begin();
@@ -19,6 +21,42 @@ void configServer(){
   Serial.println("/setalarm?time=HH:MM&prealarm=MINUTES");
   
 }
+
+void handleLEDOnTime() {
+  if (server.hasArg("minutes")) {
+    int minutes = server.arg("minutes").toInt();
+    if (minutes > 0 && minutes <= 60) {
+      alarmConfig.minutesLedON = minutes;
+      server.send(200, "text/plain", "OK");
+    } else {
+      server.send(400, "text/plain", "Invalid minutes value. Must be between 1 and 60.");
+    }
+  } else {
+    server.send(400, "text/plain", "Missing parameter: minutes");
+  }
+}
+
+// this function handles settings for flashing repetitions after preAlarm sequence
+// Example: /setflashing?repetitions=50
+void handleSetFlashing() {
+  if (server.hasArg("repetitions")) {
+    int repetitions = server.arg("repetitions").toInt();
+    
+    // Validate repetitions range
+    if (repetitions >= 0 && repetitions <= 10000) {
+      // Save to memory
+      alarmConfig.flashingRepetitions = repetitions;
+      
+      Serial.printf("Flashing repetitions set to: %d ms\n", repetitions);
+      server.send(200, "text/plain", "OK");
+    } else {
+      server.send(400, "text/plain", "Invalid repetitions value. Must be between 0 and 10000 steps");
+    }
+  } else {
+    server.send(400, "text/plain", "Missing parameter: repetitions");
+  }
+}
+
 // this function handles settings for alarm via HTTP GET request
 void handleSetAlarm() {
   if (server.hasArg("time") && server.hasArg("prealarm")) {
