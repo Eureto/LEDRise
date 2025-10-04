@@ -2,7 +2,9 @@ Created using PlatformIO for VSCode
 and Android Studio
 
 TODO:
- - in app add ability to set flsahing repetition and led on time 
+- Add OTA update functionality
+- add manual turn on off led and set brightness
+- in app add ability to set flsahing repetition and led on time 
 
 
 
