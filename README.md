@@ -4,7 +4,6 @@ and Android Studio
 TODO:
 - Add OTA update functionality
 - add manual turn on off led and set brightness
-- in app add ability to set flsahing repetition and led on time 
 
 
 
