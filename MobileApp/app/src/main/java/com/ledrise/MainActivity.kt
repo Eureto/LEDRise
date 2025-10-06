@@ -31,8 +31,11 @@ class MainActivity : AppCompatActivity() {
     var settingsButton: ImageButton? = null
     private val client = OkHttpClient()
     val deviceIPAddress:String = "192.168.0.150"
-
+    var onOffLedButton: Button? = null
     var textInfo: TextView? = null
+    var isLedOn: Boolean = false
+    var brightnessSlider: com.google.android.material.slider.Slider? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,13 +76,89 @@ class MainActivity : AppCompatActivity() {
             val intent = android.content.Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
+        onOffLedButton = findViewById(R.id.buttonTurnOnOffLed)
+        onOffLedButton?.setOnClickListener{
+            turnOnOffLed()
+        }
+        brightnessSlider = findViewById(R.id.brightnessSlider)
+        brightnessSlider?.addOnChangeListener { _, value, _ ->
+           setLedBrightness(value.toInt())
+        }
+
         // After initialization check if alarm is set
         checkStatusOfAlarm();
 
     }
 
+    fun setLedBrightness(value: Int){
+        val url = "http://${deviceAddress}/setBrightness?value=$value"
+        lifecycleScope.launch {
+            try {
+                val responseBody = sendGetRequest(url)
+
+                if(responseBody != null && responseBody.equals("Invalid brightness value. Must be between 0 and 255.")){
+                    textInfo?.text = "Invalid brightness value. Must be between 0 and 255."
+                }
+            }
+            catch(e: Exception){
+                textInfo?.text = "An error occurred"
+            }
+        }
+
+    }
+
+    fun turnOnOffLed(){
+        val url = "http://${deviceAddress}/turnOnOffLed"
+        lifecycleScope.launch {
+            try {
+                val responseBody = sendGetRequest(url)
+
+                if(responseBody != null){
+                     if(responseBody.equals("LED turned on")){
+                         textInfo?.text = "LED turned on"
+                         isLedOn = true
+                         onOffLedButton?.text = "Turn off LED"
+
+                     }else if(responseBody.equals("LED turned off")){
+                         textInfo?.text = "LED turned off"
+                         isLedOn = false
+                         onOffLedButton?.text = "Turn on LED"
+
+                     }
+                }
+            }
+            catch(e: Exception){
+                textInfo?.text = "An error occurred"
+            }
+        }
+    }
+
+    fun checkLedOnOffState(){
+        val url = "http://${deviceAddress}/ledStateStatus"
+        lifecycleScope.launch {
+            try {
+                val responseBody = sendGetRequest(url)
+
+                if(responseBody != null){
+                    if(responseBody.equals("ON")){
+                        isLedOn = true
+                        onOffLedButton?.text = "Turn off LED"
+
+                    }else if(responseBody.equals("OFF")){
+                        isLedOn = false
+                        onOffLedButton?.text = "Turn on LED"
+
+                    }
+                }
+            }
+            catch(e: Exception){
+                textInfo?.text = "An error occurred"
+            }
+        }
+    }
+
     fun checkStatusOfAlarm(){
-        val url = "http://${deviceAddress}/status"
+        val url = "http://${deviceAddress}/alarmStatus"
 
         lifecycleScope.launch {
             try {

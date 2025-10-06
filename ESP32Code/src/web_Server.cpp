@@ -8,10 +8,13 @@ TaskHandle_t alarmTaskHandle = NULL;
 
 void configServer(){
   server.on("/setalarm", handleSetAlarm);
-  server.on("/status", handleStatus);
+  server.on("/alarmStatus", handleAlarmStatus);
   server.on("/stopalarm", handleStopAlarm);
   server.on("/setflashing", handleSetFlashing);
   server.on("/ledonminutes", handleLEDOnTime);
+  server.on("/turnOnOffLed", handleTurnOnOffLed);
+  server.on("/ledStateStatus", handleLedStateStatus);
+  server.on("/setBrightness", handleLedBrightness);
   server.onNotFound(handleNotFound);
 
   server.begin();
@@ -20,6 +23,42 @@ void configServer(){
   Serial.print(WiFi.localIP());
   Serial.println("/setalarm?time=HH:MM&prealarm=MINUTES");
   
+}
+
+
+void handleLedBrightness() {
+  if (server.hasArg("value")) {
+    int brightness = server.arg("value").toInt();
+    if (brightness >= 0 && brightness <= 255) {
+      analogWrite(LED_PIN, brightness);
+      server.send(200, "text/plain", "OK");
+    } else {
+      server.send(400, "text/plain", "Invalid brightness value. Must be between 0 and 255.");
+    }
+  } else {
+    server.send(400, "text/plain", "Missing parameter: value");
+  }
+}
+
+void handleTurnOnOffLed() {
+  
+  if(digitalRead(LED_PIN) == HIGH) {
+    analogWrite(LED_PIN, 0); // Turn off LED
+    server.send(200, "text/plain", "LED turned off");
+    return;
+  }else{
+    // If LED is off, turn it on
+    analogWrite(LED_PIN, 255); // Turn on LED at full brightness
+    server.send(200, "text/plain", "LED turned on");
+    return;
+  }
+
+}
+
+void handleLedStateStatus() {
+
+  String ledState = digitalRead(LED_PIN) == HIGH ? "ON" : "OFF";
+  server.send(200, "text/plain", ledState);
 }
 
 void handleLEDOnTime() {
@@ -102,13 +141,16 @@ void handleSetAlarm() {
   }
 }
 
-void handleStatus() {
+void handleAlarmStatus() {
   String response = "";
   
+
   if (alarmConfig.isSet) {
     response = "ALARM_SET:" + alarmConfig.alarmTime + " and preminutes: " + String(alarmConfig.preAlarmMinutes);
+    
   } else {
-    response = "NO_ALARM";
+    response = "NO_ALARM ";
+
   }
   
   server.send(200, "text/plain", response);

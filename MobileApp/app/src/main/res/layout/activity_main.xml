@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:paddingBottom = "0dp">
+    android:paddingBottom="0dp"
+    tools:context=".MainActivity">
 
 
     <ImageButton
@@ -75,7 +75,7 @@
         android:layout_width="0dp"
         android:layout_height="137dp"
         android:layout_marginTop="32dp"
-        android:layout_marginBottom="46dp"
+        android:layout_marginBottom="60dp"
         android:scaleX="1.6"
         android:scaleY="1.6"
         app:layout_constraintBottom_toTopOf="@+id/textViewSetInfo"
@@ -87,6 +87,8 @@
         android:id="@+id/textViewSetInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="20dp"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -111,41 +113,89 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/buttonContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="3dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSetInfo">
+        app:layout_constraintTop_toBottomOf="@+id/textViewSetInfo"
+        app:layout_constraintVertical_bias="1.0">
 
-        <Button
-            android:id="@+id/buttonSet"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="0dp"
-            android:layout_weight="1"
-            android:paddingBottom="0px"
-            android:text="Set Alarm"
-            app:cornerRadius="0px"
-            app:iconPadding="0dp" />
-
-        <Button
-            android:id="@+id/buttonDeleteAlarm"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_weight="1"
-            android:text="Delete Alarm"
-            app:cornerRadius="0px" />
-    </LinearLayout>
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="25dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSetInfo">
 
+            <Button
+                android:id="@+id/buttonSet"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:paddingBottom="0px"
+                android:text="Set Alarm"
+                app:cornerRadius="0px"
+                app:iconPadding="0dp" />
+
+            <Button
+                android:id="@+id/buttonDeleteAlarm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:text="Delete Alarm"
+                app:cornerRadius="0px" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+            <Button
+                android:id="@+id/buttonTurnOnOffLed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:text="ON Led"
+                app:cornerRadius="0dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="Set Led Brightness:"
+            android:textSize="16sp" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/brightnessSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:stepSize="1"
+            android:value="0"
+            android:valueFrom="0"
+            android:valueTo="255" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

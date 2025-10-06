@@ -5,6 +5,9 @@
 #include <Arduino.h>
 #include "config.h"
 
+void handleLedBrightness();
+void handleTurnOnLed();
+void handleTurnOffLed();
 void handleSetAlarm();
 void handleSetFlashing();
 void handleLEDOnTime();
