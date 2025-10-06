@@ -5,6 +5,7 @@
 #include "wifiConnection.h"
 #include "ledSignals.h"
 #include "debuggingShit.h"
+#include <ElegantOTA.h>
 
 bool DEBUG = true;
 
@@ -30,7 +31,8 @@ void setup() {
 }
 
 void loop() {
-server.handleClient();  // Handle incoming requests
+  server.handleClient();  // Handle incoming requests
+  ElegantOTA.loop();
   delay(10);
 }
 

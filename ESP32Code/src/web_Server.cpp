@@ -2,6 +2,12 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include "alarm.h"
+#include <ElegantOTA.h>
+#include "config.h"
+
+bool isLedOn = false;
+bool isAlarmActive = false;
+
 WebServer server(80);
 
 TaskHandle_t alarmTaskHandle = NULL;
@@ -17,6 +23,8 @@ void configServer(){
   server.on("/setBrightness", handleLedBrightness);
   server.onNotFound(handleNotFound);
 
+  ElegantOTA.begin(&server);    // Start ElegantOTA, must be before server.begin()
+  ElegantOTA.setAuth(OTA_USERNAME, OTA_PASSWORD);
   server.begin();
   Serial.println("HTTP server started");
   Serial.print("Set alarm: http://");
@@ -27,9 +35,14 @@ void configServer(){
 
 
 void handleLedBrightness() {
+  if(isAlarmActive) {
+    server.send(400, "text/plain", "Cannot change brightness while alarm is active");
+    return;
+  }
   if (server.hasArg("value")) {
     int brightness = server.arg("value").toInt();
     if (brightness >= 0 && brightness <= 255) {
+      isLedOn = brightness > 0 ? true : false;
       analogWrite(LED_PIN, brightness);
       server.send(200, "text/plain", "OK");
     } else {
@@ -41,14 +54,19 @@ void handleLedBrightness() {
 }
 
 void handleTurnOnOffLed() {
-  
-  if(digitalRead(LED_PIN) == HIGH) {
+  if(isAlarmActive) {
+    server.send(400, "text/plain", "Cannot toggle LED while alarm is active");
+    return;
+  }
+  if(isLedOn) {
     analogWrite(LED_PIN, 0); // Turn off LED
+    isLedOn = false;
     server.send(200, "text/plain", "LED turned off");
     return;
   }else{
     // If LED is off, turn it on
     analogWrite(LED_PIN, 255); // Turn on LED at full brightness
+    isLedOn = true;
     server.send(200, "text/plain", "LED turned on");
     return;
   }
@@ -57,7 +75,7 @@ void handleTurnOnOffLed() {
 
 void handleLedStateStatus() {
 
-  String ledState = digitalRead(LED_PIN) == HIGH ? "ON" : "OFF";
+  String ledState = isLedOn == true ? "ON" : "OFF";
   server.send(200, "text/plain", ledState);
 }
 

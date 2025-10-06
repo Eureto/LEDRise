@@ -53,6 +53,7 @@ void startAlarm(void *parameter)
     //////////////////////////// PRE ALARM SEQUENCE ////////////////////////////
     // Pre-alarm sequence: gradually increase LED brightness
     
+    isAlarmActive = true;
     int brightness = 0;
     int pauseTime = calculatePauseTimeInMilliseconds(alarmConfig.preAlarmMinutes);
     Serial.println("Starting pre-alarm sequence...");
@@ -80,6 +81,7 @@ void startAlarm(void *parameter)
     alarmConfig.isSet = false; // Reset alarm 
     
     // Small delay to ensure all operations complete
+    isAlarmActive = false;
     delay(100);
     
     // Properly delete the task to avoid crashes

@@ -6,13 +6,17 @@ extern const char* ssid;
 extern const char* password;
 
 // Hardware configuration
-#define LED_PIN 25
-#define Internal_LED 25
+extern const int LED_PIN;        // Pin connected to the LED
+extern const int Internal_LED;   // Pin connected to the internal LED
 
 // NTP server configuration for Poland (extern declarations)
 extern const char* ntpServer;
 extern const long gmtOffset_sec;
 extern const int daylightOffset_sec;
+
+// OTA update credentials 
+extern const char* OTA_USERNAME;
+extern const char* OTA_PASSWORD;
 
 // Static IP configuration (change these to match your network)
 #define STATIC_IP_ENABLED true  // Set to false for DHCP

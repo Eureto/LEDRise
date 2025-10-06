@@ -6,16 +6,17 @@
 #include "config.h"
 
 void handleLedBrightness();
-void handleTurnOnLed();
-void handleTurnOffLed();
+void handleTurnOnOffLed();
+void handleLedStateStatus();
 void handleSetAlarm();
 void handleSetFlashing();
 void handleLEDOnTime();
-void handleStatus();
+void handleAlarmStatus();
 void handleNotFound();
 void configServer();
 void handleStopAlarm();
 
 extern WebServer server;
+extern bool isAlarmActive;
 
 #endif

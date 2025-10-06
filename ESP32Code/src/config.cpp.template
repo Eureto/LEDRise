@@ -1,4 +1,11 @@
+// Also in config.h there are setting for network like IP address, DNS and gateway
+
+
 #include "config.h"
+
+// Pin definitions
+const int LED_PIN = 25;
+const int Internal_LED = 25;
 
 // WiFi configuration definitions
 // Copy this file to config.cpp and fill in your actual credentials
@@ -9,3 +16,7 @@ const char* password = "YOUR_WIFI_PASSWORD_HERE";
 const char* ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 1 * 3600;  // Poland is UTC+1
 const int daylightOffset_sec = 3600;  // DST offset (summer time)
+
+// OTA update credentials
+const char* OTA_USERNAME = "admin";  // Change this to your desired username
+const char* OTA_PASSWORD = "admin";  // Change this to your desired password
