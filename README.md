@@ -2,9 +2,7 @@ Created using PlatformIO for VSCode
 and Android Studio
 
 TODO:
-- Add OTA update functionality
-- add manual turn on off led and set brightness
-
+- create README
 
 
 
