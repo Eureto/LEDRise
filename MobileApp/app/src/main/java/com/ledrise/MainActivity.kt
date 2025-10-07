@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.NumberPicker
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     var deleteButton: Button? = null
     var settingsButton: ImageButton? = null
     private val client = OkHttpClient()
-    val deviceIPAddress:String = "192.168.0.150"
     var onOffLedButton: Button? = null
     var textInfo: TextView? = null
     var isLedOn: Boolean = false
@@ -86,8 +86,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // After initialization check if alarm is set
-        checkStatusOfAlarm();
-
+        checkStatusOfAlarm()
+        //checkLedOnOffState()
     }
 
     fun setLedBrightness(value: Int){
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             catch(e: Exception){
-                textInfo?.text = "An error occurred"
+                textInfo?.text = "An error occurred 1"
             }
         }
 
@@ -115,20 +115,24 @@ class MainActivity : AppCompatActivity() {
 
                 if(responseBody != null){
                      if(responseBody.equals("LED turned on")){
-                         textInfo?.text = "LED turned on"
+                         textInfo?.text = "LED has been turned on"
                          isLedOn = true
+                         val redColor = ContextCompat.getColor(this@MainActivity, R.color.red)
+                         onOffLedButton?.setBackgroundColor(redColor)
                          onOffLedButton?.text = "Turn off LED"
 
                      }else if(responseBody.equals("LED turned off")){
-                         textInfo?.text = "LED turned off"
+                         textInfo?.text = "LED has been turned off"
                          isLedOn = false
+                         val greenColor = ContextCompat.getColor(this@MainActivity, R.color.green)
+                         onOffLedButton?.setBackgroundColor(greenColor)
                          onOffLedButton?.text = "Turn on LED"
 
                      }
                 }
             }
             catch(e: Exception){
-                textInfo?.text = "An error occurred"
+                textInfo?.text = "An error occurred 2"
             }
         }
     }
@@ -143,16 +147,19 @@ class MainActivity : AppCompatActivity() {
                     if(responseBody.equals("ON")){
                         isLedOn = true
                         onOffLedButton?.text = "Turn off LED"
+                        val redColor = ContextCompat.getColor(this@MainActivity, R.color.red)
+                        onOffLedButton?.setBackgroundColor(redColor)
 
                     }else if(responseBody.equals("OFF")){
                         isLedOn = false
                         onOffLedButton?.text = "Turn on LED"
-
+                        val greenColor = ContextCompat.getColor(this@MainActivity, R.color.green)
+                        onOffLedButton?.setBackgroundColor(greenColor)
                     }
                 }
             }
             catch(e: Exception){
-                textInfo?.text = "An error occurred"
+                textInfo?.text = "An error occurred 3"
             }
         }
     }
@@ -163,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Check if device is avilable in the network
-                if(!isDeviceReachable(deviceIPAddress)) {
+                if(!isDeviceReachable(deviceAddress)) {
                     textInfo?.text = "Device is not avilable in this network"
                     return@launch
                 }
@@ -186,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                 textInfo?.text = "Network error occurred"
                 Log.e("NetworkRequest", "Network Error: ${e.message}", e)
             } catch (e: Exception) {
-                textInfo?.text = "An error occurred"
+                textInfo?.text = "An error occurred 4"
                 Log.e("NetworkRequest", "Error: ${e.message}", e)
             }
         }
@@ -227,7 +234,7 @@ class MainActivity : AppCompatActivity() {
                 textInfo?.text = "Network error occurred"
                 Log.e("NetworkRequest", "Network Error: ${e.message}", e)
             } catch (e: Exception) {
-                textInfo?.text = "An error occurred"
+                textInfo?.text = "An error occurred 5"
                 Log.e("NetworkRequest", "Error: ${e.message}", e)
             }
         }
@@ -257,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Check if device is avilable in the network
-                if(!isDeviceReachable(deviceIPAddress)) {
+                if(!isDeviceReachable(deviceAddress)) {
                     textInfo?.text = "Device is not avilable in this network"
                     return@launch
                 }
@@ -296,7 +303,7 @@ class MainActivity : AppCompatActivity() {
                 textInfo?.text = "Network error occurred"
                 Log.e("NetworkRequest", "Network Error: ${e.message}", e)
             } catch (e: Exception) {
-                textInfo?.text = "An error occurred"
+                textInfo?.text = "An error occurred 6"
                 Log.e("NetworkRequest", "Error: ${e.message}", e)
             }
         }

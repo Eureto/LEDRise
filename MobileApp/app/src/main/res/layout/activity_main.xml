@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
         tools:text="Hour :" />
 
     <TextView
@@ -44,7 +44,6 @@
         android:layout_width="312dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
         android:text="PreMinutes"
         android:textAlignment="center"
         android:textSize="20sp"
@@ -59,7 +58,6 @@
         android:id="@+id/timePicker"
         android:layout_width="0dp"
         android:layout_height="294dp"
-        android:layout_marginBottom="11dp"
         android:padding="24dp"
         android:scaleX="1.6"
         android:scaleY="1.6"
@@ -87,30 +85,35 @@
         android:id="@+id/textViewSetInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="20dp"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/minutePicker" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+        android:shadowColor="#7A7A7A"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="25"
         android:text="LedRise"
+
         android:textAlignment="center"
         android:textAllCaps="false"
+        android:textColor="@android:color/black"
         android:textSize="48sp"
         android:textStyle="bold"
+
         app:layout_constraintBottom_toTopOf="@+id/textViewHour"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.65999997" />
 
     <LinearLayout
         android:id="@+id/buttonContainer"
@@ -118,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +130,7 @@
         app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/linearLayoutSetDeleteAlarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -159,13 +163,14 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayoutON_OFFLed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="5dp"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutSetDeleteAlarm">
 
             <Button
                 android:id="@+id/buttonTurnOnOffLed"
@@ -173,8 +178,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:backgroundTint="#039D08"
                 android:text="ON Led"
-                app:cornerRadius="0dp" />
+                app:cornerRadius="0dp"
+                app:strokeColor="#090909" />
 
         </LinearLayout>
 
