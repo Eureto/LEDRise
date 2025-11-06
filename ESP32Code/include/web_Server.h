@@ -10,13 +10,12 @@ void handleTurnOnOffLed();
 void handleLedStateStatus();
 void handleSetAlarm();
 void handleSetFlashing();
-void handleLEDOnTime();
+void handleLedOnTime();
 void handleAlarmStatus();
 void handleNotFound();
 void configServer();
 void handleStopAlarm();
 
 extern WebServer server;
-extern bool isAlarmActive;
 
 #endif

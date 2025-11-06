@@ -6,7 +6,6 @@
 #include "config.h"
 
 bool isLedOn = false;
-bool isAlarmActive = false;
 
 WebServer server(80);
 
@@ -17,14 +16,14 @@ void configServer(){
   server.on("/alarmStatus", handleAlarmStatus);
   server.on("/stopalarm", handleStopAlarm);
   server.on("/setflashing", handleSetFlashing);
-  server.on("/ledonminutes", handleLEDOnTime);
+  server.on("/ledonminutes", handleLedOnTime);
   server.on("/turnOnOffLed", handleTurnOnOffLed);
   server.on("/ledStateStatus", handleLedStateStatus);
   server.on("/setBrightness", handleLedBrightness);
   server.onNotFound(handleNotFound);
 
   ElegantOTA.begin(&server);    // Start ElegantOTA, must be before server.begin()
-  ElegantOTA.setAuth(OTA_USERNAME, OTA_PASSWORD);
+  ElegantOTA.setAuth(OTA_USERNAME, OTA_PASSWORD); // must type ipaddress/update to access ota page
   server.begin();
   Serial.println("HTTP server started");
   Serial.print("Set alarm: http://");
@@ -35,7 +34,7 @@ void configServer(){
 
 
 void handleLedBrightness() {
-  if(isAlarmActive) {
+  if(alarmConfig.alarmSequenceStarted) {
     server.send(400, "text/plain", "Cannot change brightness while alarm is active");
     return;
   }
@@ -54,7 +53,7 @@ void handleLedBrightness() {
 }
 
 void handleTurnOnOffLed() {
-  if(isAlarmActive) {
+  if(alarmConfig.alarmSequenceStarted) {
     server.send(400, "text/plain", "Cannot toggle LED while alarm is active");
     return;
   }
@@ -79,7 +78,7 @@ void handleLedStateStatus() {
   server.send(200, "text/plain", ledState);
 }
 
-void handleLEDOnTime() {
+void handleLedOnTime() {
   if (server.hasArg("minutes")) {
     int minutes = server.arg("minutes").toInt();
     if (minutes >= 0 && minutes <= 60) {
@@ -180,14 +179,15 @@ void handleNotFound() {
 
 void handleStopAlarm() {
   if (alarmConfig.isSet) {
-    alarmConfig.isSet = false; // Reset alarm
     if (alarmTaskHandle != NULL) {
       vTaskDelete(alarmTaskHandle);
       alarmTaskHandle = NULL;
+      analogWrite(LED_PIN, 0); // Turn off LED if it was on
+      Serial.println("Alarm stopped by user");
+      server.send(200, "text/plain", "Alarm stopped");
+      alarmConfig.isSet = false; // Reset alarm
+      alarmConfig.alarmSequenceStarted = false; // If alarm is deleted then led is off and sequence is aborted.
     }
-    analogWrite(LED_PIN, 0); // Turn off LED if it was on
-    Serial.println("Alarm stopped by user");
-    server.send(200, "text/plain", "Alarm stopped");
   } else {
     server.send(400, "text/plain", "No alarm is set");
   }

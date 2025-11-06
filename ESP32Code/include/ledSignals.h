@@ -8,6 +8,7 @@
 struct LedBlinkingParams {
   int blinkSpeedOn;
   int blinkSpeedOff;
+  int brightness;
 };
 
 void ledSignals(void *parameter);

@@ -15,6 +15,7 @@ struct AlarmConfig {
   bool isSet;           // Flag to indicate if alarm is configured
   int flashingRepetitions; // Interval for LED flashing in milliseconds
   int minutesLedON;
+  bool alarmSequenceStarted;
 };
 
 

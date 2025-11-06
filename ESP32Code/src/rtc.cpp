@@ -8,7 +8,7 @@ TaskHandle_t ledTaskHandle = NULL;
 // setup RTC with NTP server to poland time and then display it 
 void initializeTime() {
   // long blink short noBlink
-  static LedBlinkingParams LedBlinkingParams = {1000, 100}; 
+  static LedBlinkingParams LedBlinkingParams = {1000, 100, 2}; 
   //Create task indicating connection to wifi
   xTaskCreatePinnedToCore(
     ledSignals,        // Task function
@@ -41,6 +41,7 @@ void initializeTime() {
   if (ledTaskHandle != NULL) {
     vTaskDelete(ledTaskHandle);
     ledTaskHandle = NULL;
+    analogWrite(Internal_LED, 0); // Ensure LED is turned off after time sync
   }
 
   printTimeRTC();

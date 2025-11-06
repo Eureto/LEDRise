@@ -3,7 +3,7 @@
 extern TaskHandle_t ledTaskHandle;  // Declaration only
 
 void connectToWiFi() {
-  static LedBlinkingParams LedBlinkingParams = {200, 800}; // short blink long noBlink
+  static LedBlinkingParams LedBlinkingParams = {200, 800, 2}; // short blink long noBlink with low brightness
   //Create task indicating connection to wifi
   xTaskCreatePinnedToCore(
     ledSignals,   // Task function
@@ -47,6 +47,7 @@ void connectToWiFi() {
   if (ledTaskHandle != NULL) {
     vTaskDelete(ledTaskHandle);
     ledTaskHandle = NULL;
+    analogWrite(Internal_LED, 0); // Ensure LED is turned off after connection
   }
   
 }
