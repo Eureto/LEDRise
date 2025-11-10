@@ -3,6 +3,7 @@ and Android Studio
 
 TODO:
 - create README
+- while creating new alarm check if alarm already exist.
 
 
 
