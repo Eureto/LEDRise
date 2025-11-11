@@ -115,6 +115,10 @@ void handleSetFlashing() {
 
 // this function handles settings for alarm via HTTP GET request
 void handleSetAlarm() {
+  if (alarmTaskHandle != NULL) {
+    server.send(400, "text/plain", "Alarm is already set");
+    return;
+  }
   if (server.hasArg("time") && server.hasArg("prealarm")) {
     String time = server.arg("time");
     int preAlarm = server.arg("prealarm").toInt();
@@ -178,16 +182,14 @@ void handleNotFound() {
 }
 
 void handleStopAlarm() {
-  if (alarmConfig.isSet) {
-    if (alarmTaskHandle != NULL) {
-      vTaskDelete(alarmTaskHandle);
-      alarmTaskHandle = NULL;
-      analogWrite(LED_PIN, 0); // Turn off LED if it was on
-      Serial.println("Alarm stopped by user");
-      server.send(200, "text/plain", "Alarm stopped");
-      alarmConfig.isSet = false; // Reset alarm
-      alarmConfig.alarmSequenceStarted = false; // If alarm is deleted then led is off and sequence is aborted.
-    }
+  if (alarmTaskHandle != NULL) {
+    vTaskDelete(alarmTaskHandle);
+    alarmTaskHandle = NULL;
+    analogWrite(LED_PIN, 0); // Turn off LED if it was on
+    Serial.println("Alarm stopped by user");
+    server.send(200, "text/plain", "Alarm stopped");
+    alarmConfig.isSet = false; // Reset alarm
+    alarmConfig.alarmSequenceStarted = false; // If alarm is deleted then led is off and sequence is aborted.
   } else {
     server.send(400, "text/plain", "No alarm is set");
   }
