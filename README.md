@@ -3,7 +3,9 @@ and Android Studio
 
 TODO:
 - create README
-- while creating new alarm check if alarm already exist.
+- when turning on/off do it gradually
+- add condensator between psu and microcontroller
+-  
 
 
 
