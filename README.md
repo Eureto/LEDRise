@@ -7,7 +7,7 @@ Componenets I used:
 - 12v, 2A PSU
 - Lm2596 DC-DC converter
 - IRLB8721 MOSFET
-- Resistors(?????)
+- Resistors(TODO: Values)
 - Switch, breadboard... 
 
 
@@ -17,7 +17,8 @@ TODO:
 - add condensator between psu and microcontroller
   
 
-
+Printing
+- Part2 needs to be a little flexible so keep that in mind when printing. I used PETG 
 
 COMPILING:
 - Create config.cpp from config.cpp.template
