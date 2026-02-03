@@ -12,9 +12,6 @@ Componenets I used:
 
 
 TODO:
-- create README
-- when turning on/off do it gradually
-- add capacitor between psu and microcontroller
   
 
 Printing
