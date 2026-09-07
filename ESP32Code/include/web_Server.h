@@ -17,5 +17,6 @@ void configServer();
 void handleStopAlarm();
 
 extern WebServer server;
+extern TaskHandle_t alarmTaskHandle;
 
 #endif

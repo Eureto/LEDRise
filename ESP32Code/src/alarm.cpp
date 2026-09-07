@@ -86,6 +86,7 @@ void startAlarm(void *parameter)
     
     // Properly delete the task to avoid crashes
     Serial.println("Deleting alarm task...");
+    alarmTaskHandle = NULL;
     vTaskDelete(NULL);
 }
 

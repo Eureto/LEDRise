@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.widget.NumberPicker
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,13 @@ class MainActivity : AppCompatActivity() {
         preMinutePicker?.minValue = 0
         preMinutePicker?.maxValue = 160
         preMinutePicker?.wrapSelectorWheel = true // Allows continuous scrolling (59 -> 0 and 0 -> 59)
-        preMinutePicker?.value = 60 // Example: Set initial value to 60 minutes
+        //preMinutePicker?.value = 15 // Example: Set initial value to 60 minutes
+
+        // Load the saved pre-alarm value from SharedPreferences
+        val sharedPreferences: SharedPreferences = getSharedPreferences("AlarmSettings", MODE_PRIVATE)
+        val savedPreAlarmMinutes = sharedPreferences.getInt("preAlarmMinutes", 15)
+        preMinutePicker?.value = savedPreAlarmMinutes
+
 
         textInfo = findViewById<TextView>(R.id.textViewSetInfo)
 
@@ -88,6 +95,19 @@ class MainActivity : AppCompatActivity() {
         // After initialization check if alarm is set
         checkStatusOfAlarm()
         //checkLedOnOffState()
+    }
+
+    override fun onDestroy()
+    {
+        super.onDestroy()
+        val sharedPreferences: SharedPreferences = getSharedPreferences("AlarmSettings", MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        val preAlarmMinutes = preMinutePicker?.value.toString().toIntOrNull() ?: 15 // Default to 15 if parsing fails
+        editor.putInt("preAlarmMinutes", preAlarmMinutes)
+        editor.apply()
+
+        Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show()
     }
 
     fun setLedBrightness(value: Int){
@@ -170,12 +190,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 // Check if device is avilable in the network
-                if(!isDeviceReachable(deviceAddress)) {
+                if (!isDeviceReachable(deviceAddress)) {
                     textInfo?.text = "Device is not avilable in this network"
                     return@launch
                 }
                 val responseBody = sendGetRequest(url)
-                if(responseBody != null) {
+                if (responseBody != null) {
                     if (responseBody.equals("NO_ALARM")) {
                         textInfo?.text = "No alarm set"
                     } else {
@@ -184,7 +204,7 @@ class MainActivity : AppCompatActivity() {
                             "Alarm is set on ${parts[1]}:${parts[2]}: ${parts[3]} \n"
                     }           // ALARM SET: HH:MM and preminutes: XX
                     Log.d("NetworkResponse", "Response: $responseBody")
-                }else{
+                } else {
                     textInfo?.text = "Failed to get alarm status"
                     Log.e("NetworkResponse", "Request failed or no response body.")
                 }
@@ -192,7 +212,10 @@ class MainActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 textInfo?.text = "Network error occurred"
                 Log.e("NetworkRequest", "Network Error: ${e.message}", e)
-            } catch (e: Exception) {
+            } catch(e: IndexOutOfBoundsException){
+                textInfo?.text = "No alarm set"
+
+            }catch (e: Exception) {
                 textInfo?.text = "An error occurred 4"
                 Log.e("NetworkRequest", "Error: ${e.message}", e)
             }
