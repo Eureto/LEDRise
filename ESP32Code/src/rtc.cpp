@@ -32,12 +32,14 @@ void initializeTime()
   int timeout = 0;
   bool timeSet = false;
 
-  while (timeout < 240) {
+  while (timeout < 240)
+  {
     delay(500);
     Serial.print(".");
     now = time(nullptr);
 
-    if (now > 1000000000) {
+    if (now > 1000000000)
+    {
       timeSet = true;
       break;
     }
@@ -45,7 +47,8 @@ void initializeTime()
   }
 
   Serial.println();
-  if (timeSet) {
+  if (timeSet)
+  {
     Serial.println("NTP sync successful!");
   }
   else
