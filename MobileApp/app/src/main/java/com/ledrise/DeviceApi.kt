@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -156,10 +157,14 @@ class DeviceApi private constructor(context: Context) {
 
     private suspend fun request(c: OkHttpClient, host: String, path: String): String {
         val req = Request.Builder().url("http://$host$path").build()
-        c.newCall(req).await().use { resp ->
-            val body = resp.body?.string().orEmpty()
-            if (!resp.isSuccessful) throw DeviceException(resp.code, body.ifEmpty { resp.message })
-            return body
+        val response = c.newCall(req).await()
+        // The continuation may resume on the main thread; reading the body is blocking I/O.
+        return withContext(Dispatchers.IO) {
+            response.use { resp ->
+                val body = resp.body?.string().orEmpty()
+                if (!resp.isSuccessful) throw DeviceException(resp.code, body.ifEmpty { resp.message })
+                body
+            }
         }
     }
 

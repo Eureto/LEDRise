@@ -116,7 +116,8 @@ class MainActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 textInfo.text = "Device not found in this network. Tap to retry."
             } catch (e: Exception) {
-                textInfo.text = "Error: ${e.message}"
+                android.util.Log.e("LedRise", "refresh failed", e)
+                textInfo.text = "Error: ${e.message ?: e.javaClass.simpleName}"
             }
         }
     }
