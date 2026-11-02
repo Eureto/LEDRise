@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">192.168.0.150</domain>
-
-    </domain-config>
+    <!-- The device has no fixed IP (found by scanning the local network), so plain HTTP
+         must be allowed for any local address. -->
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>
-        

@@ -5,191 +5,118 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="0dp"
     tools:context=".MainActivity">
-
-
-    <ImageButton
-        android:id="@+id/buttonSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Settings"
-        android:padding="8dp"
-        android:src="@drawable/ic_settings"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/textViewHour"
-        android:layout_width="304dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="32dp"
-        android:text="Hour"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/timePicker"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.527"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle"
-        tools:text="Hour :" />
-
-    <TextView
-        android:id="@+id/textViewPreMinutes"
-        android:layout_width="312dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="PreMinutes"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/minutePicker"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.46"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timePicker"
-        tools:text="PreMinutes :" />
-
-    <TimePicker
-        android:id="@+id/timePicker"
-        android:layout_width="0dp"
-        android:layout_height="294dp"
-        android:padding="24dp"
-        android:scaleX="1.6"
-        android:scaleY="1.6"
-        android:timePickerMode="spinner"
-        app:layout_constraintBottom_toTopOf="@+id/textViewPreMinutes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewHour" />
-
-    <NumberPicker
-        android:id="@+id/minutePicker"
-        android:layout_width="0dp"
-        android:layout_height="137dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="60dp"
-        android:scaleX="1.6"
-        android:scaleY="1.6"
-        app:layout_constraintBottom_toTopOf="@+id/textViewSetInfo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPreMinutes" />
-
-    <TextView
-        android:id="@+id/textViewSetInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/minutePicker" />
 
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:shadowColor="#7A7A7A"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="25"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
         android:text="LedRise"
-
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="@android:color/black"
-        android:textSize="48sp"
+        android:textSize="34sp"
         android:textStyle="bold"
-
-        app:layout_constraintBottom_toTopOf="@+id/textViewHour"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65999997" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/buttonContainer"
+    <ImageButton
+        android:id="@+id/buttonSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Settings"
+        android:padding="8dp"
+        android:src="@drawable/ic_settings"
+        app:layout_constraintBottom_toBottomOf="@id/textViewTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewTitle" />
+
+    <TextView
+        android:id="@+id/textViewSetInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="4dp"
+        android:background="?attr/selectableItemBackground"
+        android:paddingVertical="6dp"
+        android:text="Searching for device..."
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTitle" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/alarmList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintBottom_toTopOf="@id/controls"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewSetInfo" />
+
+    <TextView
+        android:id="@+id/textEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No alarms yet"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/alarmList"
+        app:layout_constraintEnd_toEndOf="@id/alarmList"
+        app:layout_constraintStart_toStartOf="@id/alarmList"
+        app:layout_constraintTop_toTopOf="@id/alarmList" />
+
+    <LinearLayout
+        android:id="@+id/controls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginBottom="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSetInfo"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:id="@+id/linearLayoutSetDeleteAlarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="25dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/textViewSetInfo">
+            android:orientation="horizontal">
 
             <Button
-                android:id="@+id/buttonSet"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:paddingBottom="0px"
-                android:text="Set Alarm"
-                app:cornerRadius="0px"
-                app:iconPadding="0dp" />
-
-            <Button
-                android:id="@+id/buttonDeleteAlarm"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_weight="1"
-                android:text="Delete Alarm"
-                app:cornerRadius="0px" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayoutON_OFFLed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="5dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutSetDeleteAlarm">
-
-            <Button
-                android:id="@+id/buttonTurnOnOffLed"
+                android:id="@+id/buttonAddAlarm"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
-                android:backgroundTint="#039D08"
-                android:text="ON Led"
-                app:cornerRadius="0dp"
-                app:strokeColor="#090909" />
+                android:text="Add alarm"
+                app:cornerRadius="0px" />
 
+            <Button
+                android:id="@+id/buttonStopAlarm"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:text="Stop sunrise"
+                app:cornerRadius="0px" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView2"
+        <Button
+            android:id="@+id/buttonTurnOnOffLed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#039D08"
+            android:text="ON Led"
+            app:cornerRadius="0dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="8dp"
             android:text="Set Led Brightness:"
             android:textSize="16sp" />
 
@@ -197,12 +124,10 @@
             android:id="@+id/brightnessSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:stepSize="1"
             android:value="0"
             android:valueFrom="0"
             android:valueTo="255" />
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
