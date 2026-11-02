@@ -5,6 +5,7 @@
 #include "wifiConnection.h"
 #include "ledSignals.h"
 #include "debuggingShit.h"
+#include "alarm.h"
 #include <ElegantOTA.h>
 
 bool DEBUG = true;
@@ -13,6 +14,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Hello, world!");
   
+  alarmsBegin();  // restore alarms + settings saved in flash
+
   // Pin Setup
   pinMode(Internal_LED, OUTPUT);
   
@@ -33,6 +36,7 @@ void setup() {
 void loop() {
   server.handleClient();  // Handle incoming requests
   ElegantOTA.loop();
+  alarmsTick();
   delay(10);
 }
 

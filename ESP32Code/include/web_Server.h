@@ -5,18 +5,22 @@
 #include <Arduino.h>
 #include "config.h"
 
+#define LEDRISE_PROTOCOL_VERSION 2
+
+void handleInfo();
 void handleLedBrightness();
 void handleTurnOnOffLed();
 void handleLedStateStatus();
-void handleSetAlarm();
 void handleSetFlashing();
 void handleLedOnTime();
-void handleAlarmStatus();
+void handleAlarmList();
+void handleAlarmSet();
+void handleAlarmDelete();
 void handleNotFound();
 void configServer();
 void handleStopAlarm();
 
 extern WebServer server;
-extern TaskHandle_t alarmTaskHandle;
+extern bool isLedOn;
 
 #endif

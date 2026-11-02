@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include "alarm.h"
+#include <time.h>
 #include <ElegantOTA.h>
 #include "config.h"
 
@@ -9,12 +10,12 @@ bool isLedOn = false;
 
 WebServer server(80);
 
-TaskHandle_t alarmTaskHandle = NULL;
-
 void configServer(){
-  server.on("/setalarm", handleSetAlarm);
-  server.on("/alarmStatus", handleAlarmStatus);
-  server.on("/stopalarm", handleStopAlarm);
+  server.on("/info", handleInfo);              // discovery + device state
+  server.on("/alarms", handleAlarmList);       // list of alarms (JSON)
+  server.on("/alarms/set", handleAlarmSet);    // create / update alarm
+  server.on("/alarms/delete", handleAlarmDelete);
+  server.on("/stopalarm", handleStopAlarm);    // abort the running sunrise sequence
   server.on("/setflashing", handleSetFlashing);
   server.on("/ledonminutes", handleLedOnTime);
   server.on("/turnOnOffLed", handleTurnOnOffLed);
@@ -25,16 +26,34 @@ void configServer(){
   ElegantOTA.begin(&server);    // Start ElegantOTA, must be before server.begin()
   ElegantOTA.setAuth(OTA_USERNAME, OTA_PASSWORD); // must type ipaddress/update to access ota page
   server.begin();
-  Serial.println("HTTP server started");
-  Serial.print("Set alarm: http://");
-  Serial.print(WiFi.localIP());
-  Serial.println("/setalarm?time=HH:MM&prealarm=MINUTES");
-  
+  Serial.print("HTTP server started on http://");
+  Serial.println(WiFi.localIP());
 }
 
+// Used by the mobile app to find the device in the local network.
+void handleInfo() {
+  time_t now = time(nullptr);
+  struct tm tmNow;
+  localtime_r(&now, &tmNow);
+  char timeBuf[32];
+  strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", &tmNow);
+
+  String json = "{\"device\":\"LedRise\",\"version\":" + String(LEDRISE_PROTOCOL_VERSION);
+  json += ",\"ip\":\"" + WiFi.localIP().toString() + "\"";
+  json += ",\"mac\":\"" + WiFi.macAddress() + "\"";
+  json += ",\"time\":\"" + String(timeBuf) + "\"";
+  json += ",\"timeValid\":" + String(now >= MIN_VALID_TIME ? "true" : "false");
+  json += ",\"ledOn\":" + String(isLedOn ? "true" : "false");
+  json += ",\"sequenceRunning\":" + String(alarmSequenceRunning() ? "true" : "false");
+  json += ",\"ledOnMinutes\":" + String(deviceSettings.ledOnMinutes);
+  json += ",\"flashingRepetitions\":" + String(deviceSettings.flashingRepetitions);
+  json += ",\"maxAlarms\":" + String(MAX_ALARMS);
+  json += "}";
+  server.send(200, "application/json", json);
+}
 
 void handleLedBrightness() {
-  if(alarmConfig.alarmSequenceStarted) {
+  if(alarmSequenceRunning()) {
     server.send(400, "text/plain", "Cannot change brightness while alarm is active");
     return;
   }
@@ -53,7 +72,7 @@ void handleLedBrightness() {
 }
 
 void handleTurnOnOffLed() {
-  if(alarmConfig.alarmSequenceStarted) {
+  if(alarmSequenceRunning()) {
     server.send(400, "text/plain", "Cannot toggle LED while alarm is active");
     return;
   }
@@ -82,7 +101,8 @@ void handleLedOnTime() {
   if (server.hasArg("minutes")) {
     int minutes = server.arg("minutes").toInt();
     if (minutes >= 0 && minutes <= 60) {
-      alarmConfig.minutesLedON = minutes;
+      deviceSettings.ledOnMinutes = minutes;
+      settingsSave();
       server.send(200, "text/plain", "OK");
     } else {
       server.send(400, "text/plain", "Invalid minutes value. Must be between 0 and 60.");
@@ -101,7 +121,8 @@ void handleSetFlashing() {
     // Validate repetitions range
     if (repetitions >= 0 && repetitions <= 10000) {
       // Save to memory
-      alarmConfig.flashingRepetitions = repetitions;
+      deviceSettings.flashingRepetitions = repetitions;
+      settingsSave();
       
       Serial.printf("Flashing repetitions set to: %d ms\n", repetitions);
       server.send(200, "text/plain", "OK");
@@ -113,84 +134,103 @@ void handleSetFlashing() {
   }
 }
 
-// this function handles settings for alarm via HTTP GET request
-void handleSetAlarm() {
-  if (alarmTaskHandle != NULL) {
-    server.send(400, "text/plain", "Alarm is already set");
-    return;
-  }
-  if (server.hasArg("time") && server.hasArg("prealarm")) {
-    String time = server.arg("time");
-    int preAlarm = server.arg("prealarm").toInt();
-    
-    // Validate time format (HH:MM)
-    if (time.length() == 5 && time.charAt(2) == ':') {
-      int hour = time.substring(0, 2).toInt();
-      int minute = time.substring(3, 5).toInt();
-      
-      // Validate hour and minute ranges
-      if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59 && preAlarm > 0 && preAlarm <= 120) {
-        // Save to memory
-        alarmConfig.alarmTime = time;
-        alarmConfig.Hour = hour;
-        alarmConfig.Minute = minute;
-        alarmConfig.preAlarmMinutes = preAlarm;
-        alarmConfig.isSet = true;
-        
-        Serial.printf("Alarm set: %s with %d minutes pre-alarm\n", time.c_str(), preAlarm);
-        server.send(200, "text/plain", "OK");
-
-        xTaskCreatePinnedToCore(
-          startAlarm,        // Task function
-          "alarmSequence",  // Task name
-          4096,              // Stack size
-          NULL,// Task parameters
-          1,                 // Priority
-          &alarmTaskHandle,    // Task handle
-          tskNO_AFFINITY     // Core ID (0 or 1)
-        );
-
-        //startAlarm(); // Start the alarm task if not already running
-      } else {
-        server.send(400, "text/plain", "Invalid time or prealarm values");
-      }
-    } else {
-      server.send(400, "text/plain", "Invalid time format. Use HH:MM");
-    }
-  } else {
-    server.send(400, "text/plain", "Missing parameters: time and prealarm required");
-  }
+static bool parseTime(const String &t, int &hour, int &minute) {
+  if (t.length() != 5 || t.charAt(2) != ':') return false;
+  hour = t.substring(0, 2).toInt();
+  minute = t.substring(3, 5).toInt();
+  return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
 }
 
-void handleAlarmStatus() {
-  String response = "";
-  
+void handleAlarmList() {
+  server.send(200, "application/json", alarmsToJson());
+}
 
-  if (alarmConfig.isSet) {
-    response = "ALARM_SET:" + alarmConfig.alarmTime + " and preminutes: " + String(alarmConfig.preAlarmMinutes);
-    
-  } else {
-    response = "NO_ALARM ";
-
+// Create or update an alarm.
+// /alarms/set?time=HH:MM&prealarm=15&days=62&repeat=1&enabled=1[&id=N]
+//  - no id -> new alarm in the first free slot
+//  - days: bitmask, bit0 = Sunday ... bit6 = Saturday
+//  - repeat=0 -> fires once on the next matching day, then disables itself
+void handleAlarmSet() {
+  if (!server.hasArg("time") || !server.hasArg("prealarm") || !server.hasArg("days")) {
+    server.send(400, "text/plain", "Missing parameters: time, prealarm and days required");
+    return;
   }
-  
-  server.send(200, "text/plain", response);
+  int hour, minute;
+  if (!parseTime(server.arg("time"), hour, minute)) {
+    server.send(400, "text/plain", "Invalid time format. Use HH:MM");
+    return;
+  }
+  int pre = server.arg("prealarm").toInt();
+  int days = server.arg("days").toInt();
+  if (pre < 1 || pre > 120) {
+    server.send(400, "text/plain", "Invalid prealarm. Must be 1-120 minutes");
+    return;
+  }
+  if (days < 1 || days > 127) {
+    server.send(400, "text/plain", "Invalid days mask. Must be 1-127");
+    return;
+  }
+
+  int id = -1;
+  if (server.hasArg("id")) {
+    id = server.arg("id").toInt();
+    if (id < 0 || id >= MAX_ALARMS || !alarms[id].used) {
+      server.send(404, "text/plain", "Alarm not found");
+      return;
+    }
+  } else {
+    for (int i = 0; i < MAX_ALARMS; i++) {
+      if (!alarms[i].used) { id = i; break; }
+    }
+    if (id < 0) {
+      server.send(400, "text/plain", "Alarm limit reached");
+      return;
+    }
+  }
+
+  Alarm &a = alarms[id];
+  a.used = 1;
+  a.hour = hour;
+  a.minute = minute;
+  a.preMinutes = pre;
+  a.days = days;
+  a.repeat = server.hasArg("repeat") ? (server.arg("repeat").toInt() != 0) : 1;
+  a.enabled = server.hasArg("enabled") ? (server.arg("enabled").toInt() != 0) : 1;
+  alarmResetFired(id);
+  alarmsSave();
+
+  Serial.printf("Alarm %d saved: %02d:%02d pre=%d days=%d repeat=%d enabled=%d\n",
+                id, hour, minute, pre, days, a.repeat, a.enabled);
+  server.send(200, "application/json", alarmToJson(id));
+}
+
+void handleAlarmDelete() {
+  if (!server.hasArg("id")) {
+    server.send(400, "text/plain", "Missing parameter: id");
+    return;
+  }
+  int id = server.arg("id").toInt();
+  if (id < 0 || id >= MAX_ALARMS || !alarms[id].used) {
+    server.send(404, "text/plain", "Alarm not found");
+    return;
+  }
+  memset(&alarms[id], 0, sizeof(Alarm));
+  alarmResetFired(id);
+  alarmsSave();
+  server.send(200, "text/plain", "OK");
 }
 
 void handleNotFound() {
   server.send(404, "text/plain", "Not found");
 }
 
+// Stops the currently running sunrise/alarm sequence (alarm configuration is kept).
 void handleStopAlarm() {
-  if (alarmTaskHandle != NULL) {
-    vTaskDelete(alarmTaskHandle);
-    alarmTaskHandle = NULL;
-    analogWrite(LED_PIN, 0); // Turn off LED if it was on
-    Serial.println("Alarm stopped by user");
+  if (alarmStopSequence()) {
+    isLedOn = false;
+    Serial.println("Alarm sequence stopped by user");
     server.send(200, "text/plain", "Alarm stopped");
-    alarmConfig.isSet = false; // Reset alarm
-    alarmConfig.alarmSequenceStarted = false; // If alarm is deleted then led is off and sequence is aborted.
   } else {
-    server.send(400, "text/plain", "No alarm is set");
+    server.send(400, "text/plain", "No alarm is running");
   }
 }
