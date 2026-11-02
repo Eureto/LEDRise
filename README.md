@@ -19,4 +19,8 @@ Printing
 
 COMPILING:
 - Create config.cpp from config.cpp.template
-- Change values in includes/config.h also change address in mobile app as it is hardcoded
+- Set WiFi credentials in config.cpp. The ESP32 uses DHCP, the app finds it by scanning the local /24 subnet for `GET /info` -> `{"device":"LedRise"}` (no fixed IP needed).
+- Alarms and settings are stored on the ESP32 (NVS flash) and survive restarts; the app only edits them.
+- Timezone/DST rules: `TZ_INFO` in config.h (Poland: CET/CEST, switches automatically).
+
+Dokumentacja (vault Obsidian): [docs/README.md](docs/README.md)
