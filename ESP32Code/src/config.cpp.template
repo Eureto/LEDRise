@@ -12,10 +12,8 @@ const int Internal_LED = 25;
 const char* ssid = "YOUR_WIFI_SSID_HERE";
 const char* password = "YOUR_WIFI_PASSWORD_HERE";
 
-// NTP server configuration for Poland definitions
+// NTP server (timezone / DST rules are defined by TZ_INFO in config.h)
 const char* ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 1 * 3600;  // Poland is UTC+1
-const int daylightOffset_sec = 3600;  // DST offset (summer time)
 
 // OTA update credentials
 const char* OTA_USERNAME = "admin";  // Change this to your desired username

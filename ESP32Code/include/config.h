@@ -11,8 +11,10 @@ extern const int Internal_LED;   // Pin connected to the internal LED
 
 // NTP server configuration for Poland (extern declarations)
 extern const char* ntpServer;
-extern const long gmtOffset_sec;
-extern const int daylightOffset_sec;
+// POSIX timezone string: Poland = CET (UTC+1) in winter, CEST (UTC+2) in summer.
+// DST starts last Sunday of March at 02:00 and ends last Sunday of October at 03:00,
+// the ESP32 switches automatically.
+#define TZ_INFO "CET-1CEST,M3.5.0,M10.5.0/3"
 
 // OTA update credentials 
 extern const char* OTA_USERNAME;

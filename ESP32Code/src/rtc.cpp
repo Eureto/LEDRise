@@ -23,8 +23,8 @@ void initializeTime()
 
   Serial.println("Initializing time from NTP server for Poland timezone...");
 
-  // Configure time with NTP server for Poland (UTC+1, DST)
-  configTime(gmtOffset_sec, daylightOffset_sec, "pool.ntp.org", "time.nist.gov", "0.pool.ntp.org");
+  // Configure time with NTP server and Polish timezone rules (automatic CET/CEST switching)
+  configTzTime(TZ_INFO, "pool.ntp.org", "time.nist.gov", "0.pool.ntp.org");
 
   // Wait for time to be set with timeout
   Serial.print("Waiting for NTP time sync");
@@ -53,12 +53,8 @@ void initializeTime()
   }
   else
   {
-    Serial.println("NTP sync FAILED! Using fallback time...");
-    // Manual fallback: Set to Jan 1, 2026 00:00:00 UTC (~1767225600)
-    struct timeval tv;
-    tv.tv_sec = 1767225600; // Jan 1, 2026
-    tv.tv_usec = 0;
-    settimeofday(&tv, NULL);
+    // No fake fallback time: alarms stay inactive until SNTP (running in background) sets the clock.
+    Serial.println("NTP sync FAILED! Alarms stay inactive until time is synced.");
   }
 
   if (ledTaskHandle != NULL)

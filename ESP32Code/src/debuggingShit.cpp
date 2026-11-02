@@ -37,7 +37,7 @@ void printTimeTask(void *parameter) {
     if (millis() - lastSync > 3600000) { // 1 hour
       if (WiFi.status() == WL_CONNECTED) {
         Serial.println("Resyncing with NTP server...");
-        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+        configTzTime(TZ_INFO, ntpServer);
         lastSync = millis();
       }
     }
